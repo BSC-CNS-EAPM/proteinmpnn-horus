@@ -1,0 +1,15 @@
+{
+    "id": "proteinmpnn",
+    "name": "ProteinMPNN",
+    "description": "Unofficial ProteinMPNN for Horus",
+    "author": "Christian Dominguez, Albert Ca\u00f1ellas",
+    "version": "0.0.1",
+    "pluginFile": "plugin.py",
+    "minHorusVersion": "0.5.1",
+    "maxHorusVersion": null,
+    "platforms": [
+        "universal"
+    ],
+    "externalURL": "https://github.com/dauparas/ProteinMPNN",
+    "dependencies": []
+}
