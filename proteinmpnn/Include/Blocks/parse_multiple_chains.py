@@ -1,7 +1,6 @@
 import os
-import shutil
 
-from HorusAPI import SlurmBlock, PluginVariable, VariableTypes
+from HorusAPI import PluginBlock, PluginVariable, VariableTypes
 
 # Define the variables for the parse_multiple_chains block
 input_pdbs_folder = PluginVariable(
@@ -24,12 +23,13 @@ output_parsed_chains = PluginVariable(
     id="output_parsed_chains",
     name="Parsed Chains JSONL",
     description="The JSONL file containing the parsed chains.",
-    type=VariableTypes.FOLDER,
+    type=VariableTypes.CUSTOM,
+    allowedValues=["parsed_pdbs_jsonl"],
 )
 
 
 # Function to run the parse_multiple_chains.py script
-def run_parse_multiple_chains(block: SlurmBlock):
+def run_parse_multiple_chains(block: PluginBlock):
     """
     Executes the parse_multiple_chains.py script with the provided arguments.
     """
@@ -72,13 +72,12 @@ def run_parse_multiple_chains(block: SlurmBlock):
 
 
 # Instantiate the block
-parse_multiple_chains_block = SlurmBlock(
+parse_multiple_chains_block = PluginBlock(
     id="ParseMultipleChains",
     name="Parse Multiple Chains",
     description="This block executes the parse_multiple_chains.py script to process PDBs.",
     inputs=[input_pdbs_folder],
     variables=[ca_only],
     outputs=[output_parsed_chains],
-    initialAction=run_parse_multiple_chains,
-    finalAction=lambda x: None,
+    action=run_parse_multiple_chains,
 )

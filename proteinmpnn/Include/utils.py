@@ -1,9 +1,9 @@
-from HorusAPI import SlurmBlock
+from HorusAPI import PluginBlock
 
 from Config.config import conda_environment, conda_run_config
 
 
-def execute_in_environment(block: SlurmBlock, cmd: str):
+def execute_in_environment(block: PluginBlock, cmd: str):
     """
     Gets the conda environment and executes the command in that environment.
     """
