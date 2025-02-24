@@ -21,31 +21,32 @@ chain_list = PluginVariable(
     type=VariableTypes.CHAIN,
 )
 
-# Output
-output_fixed_chains = PluginVariable(
-    id="output_assigned_chains",
-    name="Assigned chains JSONL",
-    description="The JSONL file containing the assigned chains.",
-    type=VariableTypes.CUSTOM,
-    allowedValues=["assigned_chains_jsonl"],
+# Variables
+tied_positions = PluginVariable(
+    id="tied_positions",
+    name="Tied positions",
+    description="Residue positions to be tied. Lists must match in length.",
+    type=VariableTypes.LIST,
 )
 
-output_selected_chains = PluginVariable(
-    id="output_selected_chains",
-    name="Selected chains",
-    description="The selected chains",
-    type=VariableTypes.CHAIN,
+# Output
+output_path_for_tied_positions = PluginVariable(
+    id="output_path_for_tied_positions",
+    name="Tied positions JSONL",
+    description="The JSONL file containing the tied positions.",
+    type=VariableTypes.CUSTOM,
+    allowedValues=["tied_positions_jsonl"],
 )
 
 
 # Function to run the assign_fixed_chains.py script
-def run_passign_chains(block: PluginBlock):
+def run_tied_positions(block: PluginBlock):
     """
-    Executes the assign_fixed_chains.py script with the provided arguments.
+    Executes the make_tied_positions.py script with the provided arguments.
     """
     input_path = block.inputs[input_parsed_chains.id]
 
-    output_path = "assigned_chains.jsonl"
+    output_path = "tied_positions.jsonl"
 
     if os.path.exists(output_path):
         os.remove(output_path)
@@ -54,14 +55,16 @@ def run_passign_chains(block: PluginBlock):
 
     chains = [c["chainID"] for c in chain_list_value]
 
-    print(f"Selected chains: {chains}")
+    tied_positions_value = block.variables[tied_positions.id]
+
+    print("Tied positions: ", "\n".join(tied_positions_value))
 
     script_plugin_path = os.path.join(
         block.pluginDir,
         "Include",
         "ProteinMPNN",
         "helper_scripts",
-        "assign_fixed_chains.py",
+        "make_tied_positions_dict.py",
     )
 
     # Build the command to run
@@ -72,6 +75,8 @@ def run_passign_chains(block: PluginBlock):
         f"--output_path={output_path}",
         "--chain_list",
         f'"{" ".join(chains)}"',
+        "--position_list",
+        f'"{",".join(tied_positions_value)}"',
     ]
 
     # Run the command
@@ -81,17 +86,16 @@ def run_passign_chains(block: PluginBlock):
 
     print(out)
 
-    block.setOutput(output_fixed_chains.id, output_path)
+    block.setOutput(output_path_for_tied_positions.id, output_path)
 
 
 # Instantiate the block
-assign_chains_block = PluginBlock(
-    id="assign_chains",
-    name="Assign Fixed Chains",
-    description="This block executes the assign_fixed_chains.py script to assign the desing chains to a protein structure.",
+make_tied_positions = PluginBlock(
+    id="make_tied_positions",
+    name="Make Tied Positions",
+    description="This block executes the make_tied_positions.py script to make tied positions for a protein structure.",
     inputs=[input_parsed_chains, chain_list],
-    outputs=[
-        output_fixed_chains,
-    ],
-    action=run_passign_chains,
+    variables=[tied_positions],
+    outputs=[output_path_for_tied_positions],
+    action=run_tied_positions,
 )

@@ -16,7 +16,7 @@ jsonl_path_variable = PluginVariable(
 
 chain_id_jsonl_variable = PluginVariable(
     id="chain_id_jsonl",
-    name="Chain ID JSONL",
+    name="Assigned chains JSONL",
     description="Path to a dictionary specifying which chains need to be designed.",
     type=VariableTypes.CUSTOM,
     allowedValues=["assigned_chains_jsonl"],
@@ -66,8 +66,8 @@ tied_positions_jsonl_variable = PluginVariable(
     id="tied_positions_jsonl",
     name="Tied Positions JSONL",
     description="Path to a dictionary with tied positions.",
-    type=VariableTypes.FILE,
-    allowedValues=["jsonl"],
+    type=VariableTypes.CUSTOM,
+    allowedValues=["tied_positions_jsonl"],
 )
 
 

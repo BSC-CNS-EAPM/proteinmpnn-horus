@@ -52,7 +52,6 @@ def run_make_fixed_positions(block: PluginBlock):
     chains = [c["chainID"] for c in chain_list_value]
     positions = [str(pos) for pos in fixed_positions_value]
 
-    print(f"Selected chains: {chains}")
     print(f"Fixed positions: {positions}")
 
     script_plugin_path = os.path.join(
