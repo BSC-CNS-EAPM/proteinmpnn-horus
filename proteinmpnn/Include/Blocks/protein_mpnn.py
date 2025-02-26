@@ -34,32 +34,32 @@ bias_aa_jsonl_variable = PluginVariable(
     id="bias_AA_jsonl",
     name="Bias AA JSONL",
     description="Path to a dictionary specifying AA composition bias.",
-    type=VariableTypes.FILE,
-    allowedValues=["jsonl"],
+    type=VariableTypes.CUSTOM,
+    allowedValues=["bias_aa_jsonl"],
 )
 
 bias_by_res_jsonl_variable = PluginVariable(
     id="bias_by_res_jsonl",
     name="Bias by Residue JSONL",
     description="Path to a dictionary with per position bias.",
-    type=VariableTypes.FILE,
-    allowedValues=["jsonl"],
+    type=VariableTypes.CUSTOM,
+    allowedValues=["bias_by_res_jsonl"],
 )
 
 omit_aa_jsonl_variable = PluginVariable(
     id="omit_AA_jsonl",
     name="Omit AA JSONL",
     description="Path to a dictionary specifying which amino acids need to be omitted from design.",
-    type=VariableTypes.FILE,
-    allowedValues=["jsonl"],
+    type=VariableTypes.CUSTOM,
+    allowedValues=["omit_AA_jsonl"],
 )
 
 pssm_jsonl_variable = PluginVariable(
     id="pssm_jsonl",
     name="PSSM JSONL",
     description="Path to a dictionary with PSSM.",
-    type=VariableTypes.FILE,
-    allowedValues=["jsonl"],
+    type=VariableTypes.CUSTOM,
+    allowedValues=["psmm_dict_jsonl"],
 )
 
 tied_positions_jsonl_variable = PluginVariable(

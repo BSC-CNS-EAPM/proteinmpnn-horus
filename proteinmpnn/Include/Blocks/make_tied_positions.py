@@ -29,6 +29,13 @@ tied_positions = PluginVariable(
     type=VariableTypes.LIST,
 )
 
+homooligomer = PluginVariable(
+    id="homooligomer",
+    name="Homooligomer",
+    description="Enable the homooligomer flag",
+    type=VariableTypes.BOOLEAN,
+)
+
 # Output
 output_path_for_tied_positions = PluginVariable(
     id="output_path_for_tied_positions",
@@ -51,14 +58,6 @@ def run_tied_positions(block: PluginBlock):
     if os.path.exists(output_path):
         os.remove(output_path)
 
-    chain_list_value = block.inputs[chain_list.id]
-
-    chains = [c["chainID"] for c in chain_list_value]
-
-    tied_positions_value = block.variables[tied_positions.id]
-
-    print("Tied positions: ", "\n".join(tied_positions_value))
-
     script_plugin_path = os.path.join(
         block.pluginDir,
         "Include",
@@ -73,11 +72,27 @@ def run_tied_positions(block: PluginBlock):
         script_plugin_path,
         f"--input_path={input_path}",
         f"--output_path={output_path}",
-        "--chain_list",
-        f'"{" ".join(chains)}"',
-        "--position_list",
-        f'"{",".join(tied_positions_value)}"',
     ]
+
+    chain_list_value = block.inputs[chain_list.id]
+    if chain_list_value:
+        chains = [c["chainID"] for c in chain_list_value]
+        cmd += [
+            "--chain_list",
+            f'"{" ".join(chains)}"',
+        ]
+
+    tied_positions_value = block.variables[tied_positions.id]
+    if tied_positions_value:
+        print("Tied positions: ", "\n".join(tied_positions_value))
+        cmd += ["--position_list", f'"{",".join(tied_positions_value)}"']
+
+    homooligomer_value = block.variables[homooligomer.id]
+    if homooligomer_value:
+        cmd += [
+            "--homooligomer",
+            "1",
+        ]
 
     # Run the command
     from utils import execute_in_environment
@@ -95,7 +110,7 @@ make_tied_positions = PluginBlock(
     name="Make Tied Positions",
     description="This block executes the make_tied_positions.py script to make tied positions for a protein structure.",
     inputs=[input_parsed_chains, chain_list],
-    variables=[tied_positions],
+    variables=[tied_positions, homooligomer],
     outputs=[output_path_for_tied_positions],
     action=run_tied_positions,
 )
