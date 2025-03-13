@@ -1,13 +1,36 @@
 import os
+import shutil
 
-from HorusAPI import PluginBlock, PluginVariable, VariableTypes
+from HorusAPI import PluginBlock, PluginVariable, VariableTypes, VariableGroup
 
 # Define the variables for the parse_multiple_chains block
-input_pdbs_folder = PluginVariable(
+pdb_input = VariableGroup(
+    id="pdb_input",
+    name="PDB file",
+    description="Select a file containing the structure of interest",
+    variables=[
+        PluginVariable(
+            id="pdb_input",
+            name="PDB File",
+            description="Select a file containing the structure of interest.",
+            type=VariableTypes.FILE,
+            allowedValues=["pdb"],
+        )
+    ],
+)
+
+fasta_folder = VariableGroup(
     id="input_pdbs_folder",
-    name="PDBs Folder",
-    description="The folder containing the PDBs to be processed by the parse_multiple_chains script.",
-    type=VariableTypes.FOLDER,
+    name="PDB folder",
+    description="Select a folder containing PDB files",
+    variables=[
+        PluginVariable(
+            id="input_pdbs_folder",
+            name="PDB Folder",
+            description="The folder containing the PDBs to be processed by the parse_multiple_chains script.",
+            type=VariableTypes.FOLDER,
+        )
+    ],
 )
 
 ca_only = PluginVariable(
@@ -33,7 +56,26 @@ def run_parse_multiple_chains(block: PluginBlock):
     """
     Executes the parse_multiple_chains.py script with the provided arguments.
     """
-    input_path = block.inputs[input_pdbs_folder.id]
+
+    # Get the files from each group
+    if block.selectedInputGroup == fasta_folder.id:
+        input_path = block.inputs[fasta_folder.id]
+    else:
+        input_path = block.inputs[pdb_input.id]
+        # Create a new folder to place this file
+        block_dirname = block.id + "_" + str(block._placedID) + "_input_pdbs"
+
+        if os.path.exists(block_dirname):
+            shutil.rmtree(block_dirname)
+
+        os.makedirs(block_dirname, exist_ok=True)
+
+        # Copy the file
+        shutil.copyfile(
+            input_path, os.path.join(block_dirname, os.path.basename(input_path))
+        )
+
+        input_path = block_dirname
 
     output_path = "parsed_pdbs.jsonl"
 
@@ -76,7 +118,7 @@ parse_multiple_chains_block = PluginBlock(
     id="ParseMultipleChains",
     name="Parse Multiple Chains",
     description="This block executes the parse_multiple_chains.py script to process PDBs.",
-    inputs=[input_pdbs_folder],
+    inputGroups=[pdb_input, fasta_folder],
     variables=[ca_only],
     outputs=[output_parsed_chains],
     action=run_parse_multiple_chains,
