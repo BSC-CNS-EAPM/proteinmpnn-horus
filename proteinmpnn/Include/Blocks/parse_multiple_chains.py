@@ -19,7 +19,7 @@ pdb_input = VariableGroup(
     ],
 )
 
-fasta_folder = VariableGroup(
+pdb_folder = VariableGroup(
     id="input_pdbs_folder",
     name="PDB folder",
     description="Select a folder containing PDB files",
@@ -58,8 +58,8 @@ def run_parse_multiple_chains(block: PluginBlock):
     """
 
     # Get the files from each group
-    if block.selectedInputGroup == fasta_folder.id:
-        input_path = block.inputs[fasta_folder.id]
+    if block.selectedInputGroup == pdb_folder.id:
+        input_path = block.inputs[pdb_folder.id]
     else:
         input_path = block.inputs[pdb_input.id]
         # Create a new folder to place this file
@@ -118,7 +118,7 @@ parse_multiple_chains_block = PluginBlock(
     id="ParseMultipleChains",
     name="Parse Multiple Chains",
     description="This block executes the parse_multiple_chains.py script to process PDBs.",
-    inputGroups=[pdb_input, fasta_folder],
+    inputGroups=[pdb_input, pdb_folder],
     variables=[ca_only],
     outputs=[output_parsed_chains],
     action=run_parse_multiple_chains,
