@@ -11,5 +11,5 @@
         "universal"
     ],
     "externalURL": "https://github.com/dauparas/ProteinMPNN",
-    "dependencies": []
+    "dependencies": ["biopython"]
 }
